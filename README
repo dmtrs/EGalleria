@@ -1,3 +1,19 @@
-EDefault
-========
-A simple class to start with yii framework extensions.
+EGalleria
+---------
+Version: 0.1
+Author: Dimitrios Meggidis
+
+###Description
+
+Yii extension to support the [Galleria](http://galleria.aino.se/) Javascript image gallery.
+The galleria files that are included are from commit: 373a3a77e83eef919046.
+
+###Links
+
+[Repository](http://www.github.com/dmtrs/EGalleria)
+[Galleria repository](https://github.com/aino/galleria)
+[Galleria official site](http://www.http://galleria.aino.se/)
+
+###Changelog
+####Version 0.1
+- Register all scripts
