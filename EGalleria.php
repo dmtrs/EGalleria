@@ -31,6 +31,14 @@ class EGalleria extends CWidget
      * @var array
      **/
     public $binding = null;
+    /**
+     * The options to initialize the galleria plugin
+     * This property will take value in initGalleria() 
+     * function.
+     * 
+     * @var array
+     **/
+    private $galleriaOptions = null;
 
     private $cssFiles = array('galleria.classic.css');
     private $jsFiles = array('galleria.js', 'galleria.classic.js');
@@ -75,32 +83,15 @@ class EGalleria extends CWidget
     {   
         $this->registerScripts();
         $this->avOptions = require_once(dirname(__FILE__).DIRECTORY_SEPARATOR."galleria.options.php");
+        $this->initGalleria();
         echo "<div id='egalleria_".$this->id."' >";
+        
+       
         parent::init();
     }
     public function run()
-    {  
-        $initialize = array();
-        if(is_array($this->galleria)) {
-            foreach($this->galleria as $option => $value ){
-                if(in_array($option, $this->avOptions))
-                    $initialize[$option] = $value;
-            }
-        }
-        foreach(array("width", "height") as $dim)
-        {
-            if(!isset($initialize[$dim]))
-                $initialize[$dim] = 500;
-            else if ((is_string($initialize[$dim])) && ($initialize[$dim] != "auto" )) {
-                $position = strpos($initialize[$dim], "px");
-                if( $position > 0 ) {
-                    $value = (int)substr($initialize[$dim], 0 , $position);
-                }
-                if( $value == 0 )
-                    $value = 500;
-                $initialize[$dim] = $value;    
-            }
-        }
+    { 
+
         if(isset($this->dataProvider) && !isset($this->binding)) {
             $behavior = $this->dataProvider->model->behaviors();
             if(!empty($behavior)) {
@@ -123,10 +114,36 @@ class EGalleria extends CWidget
             echo CHtml::image("protected/data/".$modela->$img);
         }
         echo "<script>";
-        echo "var jsn = eval(".CJSON::encode($initialize).");";
+        echo "var jsn = eval(".CJSON::encode($this->galleriaOptions).");";
         echo "console.log(jsn);";
         echo '$("#egalleria_'.$this->id.'").galleria(jsn);';
         echo "</script>";
         echo "<div>";
+    }
+    private function initGalleria()
+    {
+        
+        $initialize = array();
+        if(is_array($this->galleria)) {
+            foreach($this->galleria as $option => $value ){
+                if(in_array($option, $this->avOptions))
+                    $initialize[$option] = $value;
+            }
+        }
+        foreach(array("width", "height") as $dim)
+        {
+            if(!isset($initialize[$dim]))
+                $initialize[$dim] = 500;
+            else if ((is_string($initialize[$dim])) && ($initialize[$dim] != "auto" )) {
+                $position = strpos($initialize[$dim], "px");
+                if( $position > 0 ) {
+                    $value = (int)substr($initialize[$dim], 0 , $position);
+                }
+                if( $value == 0 )
+                    $value = 500;
+                $initialize[$dim] = $value;    
+            }
+        }
+        $this->galleriaOptions = $initialize;
     }
 }
