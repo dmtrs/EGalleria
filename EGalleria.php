@@ -1,4 +1,17 @@
 <?php
+/**
+ * EGalleria
+ * =========
+ * Yii framework extension to support galleria javascript plugin.
+ * Links:
+ * - Galleria: http://galleria.aino.se/
+ * - EGalleria: http://www.github.com/dmtrs/egalleria
+ * - Extension site: http://www.yiiframework.com/extension/egalleria
+ * 
+ * @version 0.2 beta
+ * @author Dimitrios Mengidis <tydeas@gmail.com>
+ * @date 11 Marc 2011
+ **/
 class EGalleria extends CWidget
 {
     /**

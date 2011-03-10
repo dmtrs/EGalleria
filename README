@@ -28,7 +28,7 @@ Add import of EGalleria extension in your config/main.php file:
 [php]
     'imports'=>array(
         ...
-        'application.extensions.EGalleria'
+        'application.extensions.EGalleria.*'
         ...
     ),
 ~~~    
@@ -41,17 +41,17 @@ plugin your own.
 
 ####With Dataprovider
 
-To bind a dataprovider with the widget you need to specify which of the model attributes 
+To bind a dataprovider with the widget you need to specify at least which of the model attributes 
 is the url for the image.
 
 This can be achieved in 2 ways:
-- By pasing "binding" attribute at the initialization of widget.
-- DefineEGalleriaBehavior in your model behaviors() function.
+- By passing "binding" attribute at the initialization of widget.
+- Or adding EGalleriaBehavior in your model behaviors() function.
 
 "Behavior" feature is usefull when you want to use same model for more than 1 EGalleria widget
 so you don't have to define binding again and again.
 
-####Behavior definition
+#####Behavior definition
 
 In your model behaviors() function add:
 
@@ -72,11 +72,11 @@ In your model behaviors() function add:
     }
 ~~~
 
-####Binding in initialization of widget
+#####Binding in initialization of widget
 
-Check later in example.
+Check later in example. The available attributes are the same with the behavior above.
 
-###Examples
+####Examples
 
 In your view file add.
 
@@ -102,6 +102,40 @@ $this->widget('EGalleria', array(
     ),
 ));
 ~~~
+
+####Without a Dataprovider
+
+You can use EGalleria widget without dataprovider like:
+
+~~~
+[php]
+<?php
+$this->beginWidget('EGalleria');
+?>
+<ul>
+<img src"/testo.png" alt="Description of image" title="Title of image" />
+<img src"/test1.png" />
+<img src"/test2.png" />
+<img src"/test3.png" />
+<?php 
+$this->endWidget();
+?>
+~~~
+For more information on basic dom structure, [check.](http://galleria.aino.se/getting_started/beginners_guide/)
+
+###More options
+
+There are more options that can be applied to the widget at definition.
+- "galleria"=>array(..) An associative array with all the [options of the galleria plugin.](http://galleria.aino.se/doc/1.2/options/)
+- "srcPrefix"=>"protected/data/..", If this property is defined then it will be preappened in each image src url. $src = $srcPrefix.$image;
+
+###Ending
+
+I have not tested all the galleria options, so i need some help on this by you :). Callback,themes and api features of galleria are not yet 
+implemented, will be under request.
+Any suggestions or contributions are welcome, but please use the repository of github.com for such thinks.
+Please report bugs or leave comments.
+
 ###Links
 
 [Repository](http://www.github.com/dmtrs/EGalleria)
