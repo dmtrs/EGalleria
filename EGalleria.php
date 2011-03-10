@@ -40,6 +40,7 @@ class EGalleria extends CWidget
      **/
     private $galleriaOptions = null;
 
+    public $srcPrefix = "";
     private $cssFiles = array('galleria.classic.css');
     private $jsFiles = array('galleria.js', 'galleria.classic.js');
     
@@ -100,16 +101,12 @@ class EGalleria extends CWidget
     { 
         $dataProvided = $this->dataCheck();
         if($dataProvided) {
-            $this->render("egalleria");
+            $this->render("egalleria", 
+                array('bind'=>$this->binding, 
+                'data'=>$this->dataProvider,
+                'prefix'=>$this->srcPrefix,
+            ));
         }
-/**
-        $img = $this->binding["image"];
-
-        $x = $this->dataProvider->getData();
-        foreach($x as $k=>$modela)
-        {
-            echo CHtml::image("protected/data/".$modela->$img);
-        }**/
         echo "</div>";
     }
     /**

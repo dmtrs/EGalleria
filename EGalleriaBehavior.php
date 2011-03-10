@@ -2,7 +2,8 @@
 class EGalleriaBehavior extends CBehavior {
     public $image; 
     public $title;
-    public $text;
+    public $description;
+    //Not supported
     public $link;
-
+    public $author;
 }
