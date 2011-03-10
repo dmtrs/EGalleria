@@ -51,7 +51,12 @@ class EGalleria extends CWidget
 
     private $themeName = "classic";
     private $jsAssetPath = "";
-
+    /**
+     * Register all the js and css
+     * needed for the galleria plugin and the
+     * on ready script to start the plugin.
+     *
+     **/
     private function registerScripts()
     {
         $cs = Yii::app()->clientScript;
@@ -78,48 +83,68 @@ class EGalleria extends CWidget
                 $cs->registerScriptFile($this->jsAssetPath.DIRECTORY_SEPARATOR.$file, CClientScript::POS_HEAD);
             }
         }
+        $galleriaScript = "var jsn = eval(".CJSON::encode($this->galleriaOptions)."); $('#egalleria_".$this->id."').galleria(jsn);";
+        $cs->registerScript("egalleria_script_".$this->id, $galleriaScript, CClientScript::POS_READY);
     }
     public function init()
     {   
-        $this->registerScripts();
         $this->avOptions = require_once(dirname(__FILE__).DIRECTORY_SEPARATOR."galleria.options.php");
         $this->initGalleria();
-        echo "<div id='egalleria_".$this->id."' >";
-        
-       
+
+        $this->registerScripts();
+
+        echo "<div id='egalleria_".$this->id."' >";       
         parent::init();
     }
     public function run()
     { 
-
-        if(isset($this->dataProvider) && !isset($this->binding)) {
-            $behavior = $this->dataProvider->model->behaviors();
-            if(!empty($behavior)) {
-                foreach($behavior as $name => $bind)
-                {
-                    if(strtolower($name) == "egalleria")
-                        $this->binding = $bind;
-                }
-            }
-            /**
-            if(!isset($this->binding)) {
-                return 
-            }**/
+        $dataProvided = $this->dataCheck();
+        if($dataProvided) {
+            $this->render("egalleria");
         }
+/**
         $img = $this->binding["image"];
 
         $x = $this->dataProvider->getData();
         foreach($x as $k=>$modela)
         {
             echo CHtml::image("protected/data/".$modela->$img);
-        }
-        echo "<script>";
-        echo "var jsn = eval(".CJSON::encode($this->galleriaOptions).");";
-        echo "console.log(jsn);";
-        echo '$("#egalleria_'.$this->id.'").galleria(jsn);';
-        echo "</script>";
-        echo "<div>";
+        }**/
+        echo "</div>";
     }
+    /**
+     * Check if data is provided to the widget.
+     * If data are provided it checks for the binding as well.
+     * If data is set and not binding then it returns false.
+     * In other cases returns false;
+     * 
+     * @return boolean
+     **/
+    public function dataCheck()
+    {     
+        if(isset($this->dataProvider)) {
+            if(isset($this->binding) && isset($this->binding["image"]))
+                return true;
+            $behavior = $this->dataProvider->model->behaviors();
+            if(!empty($behavior)) {
+                foreach($behavior as $name => $bind)
+                {
+                    if(strtolower($name) == "egalleria")
+                        $this->binding = $bind;
+                }         
+                if(isset($this->binding) && isset($this->binding["image"]))
+                    return true;
+            }
+        } else {
+            return false;
+        }
+    }
+    /**
+     * Take the user input for "galleria" option
+     * an initialize this galleriaOptions to use 
+     * for the plugin options.
+     * 
+     **/
     private function initGalleria()
     {
         
