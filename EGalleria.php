@@ -1,9 +1,36 @@
 <?php
 class EGalleria extends CWidget
 {
-    public $autoplay = 1000;
-    public $width = 500;
-    public $height = 500;
+    /**
+     * Options for galleria plugin by user
+     * For details: http://galleria.aino.se/docs/1.2/options/
+     *
+     * @var array
+     **/
+    public $galleria = null;
+
+    /**
+     * Dataprovider passed by user.
+     * 
+     * @array CDataProvider
+     **/
+    public $dataProvider = null; 
+     
+    /**
+     * Available galleria options.
+     * Loaded form EGalleria/galleria.options.php
+     *
+     * @var array
+     **/
+    private $avOptions = array();
+    /**
+     * Binding between model passed in dataProvider
+     * This can be defined with behaviors() or in 
+     * the initialization of this widget.
+     * 
+     * @var array
+     **/
+    public $binding = null;
 
     private $cssFiles = array('galleria.classic.css');
     private $jsFiles = array('galleria.js', 'galleria.classic.js');
@@ -45,25 +72,60 @@ class EGalleria extends CWidget
         }
     }
     public function init()
-    {    
+    {   
         $this->registerScripts();
+        $this->avOptions = require_once(dirname(__FILE__).DIRECTORY_SEPARATOR."galleria.options.php");
+        echo "<div id='egalleria_".$this->id."' >";
         parent::init();
     }
     public function run()
-    {
-        $dataProvider = new CActiveDataProvider("Stars");
-
-        echo "<div id='".$this->id."'>";
-        foreach($dataProvider->getData() as $model)
+    {  
+        $initialize = array();
+        if(is_array($this->galleria)) {
+            foreach($this->galleria as $option => $value ){
+                if(in_array($option, $this->avOptions))
+                    $initialize[$option] = $value;
+            }
+        }
+        foreach(array("width", "height") as $dim)
         {
-            echo CHtml::image("protected/data/".$model->st_image);
+            if(!isset($initialize[$dim]))
+                $initialize[$dim] = 500;
+            else if ((is_string($initialize[$dim])) && ($initialize[$dim] != "auto" )) {
+                $position = strpos($initialize[$dim], "px");
+                if( $position > 0 ) {
+                    $value = (int)substr($initialize[$dim], 0 , $position);
+                }
+                if( $value == 0 )
+                    $value = 500;
+                $initialize[$dim] = $value;    
+            }
+        }
+        if(isset($this->dataProvider) && !isset($this->binding)) {
+            $behavior = $this->dataProvider->model->behaviors();
+            if(!empty($behavior)) {
+                foreach($behavior as $name => $bind)
+                {
+                    if(strtolower($name) == "egalleria")
+                        $this->binding = $bind;
+                }
+            }
+            /**
+            if(!isset($this->binding)) {
+                return 
+            }**/
+        }
+        $img = $this->binding["image"];
+
+        $x = $this->dataProvider->getData();
+        foreach($x as $k=>$modela)
+        {
+            echo CHtml::image("protected/data/".$modela->$img);
         }
         echo "<script>";
-        echo '$("#'.$this->id.'").galleria({
-                width: '.$this->width.',
-                height: '.$this->height.',
-                autoplay: '.$this->autoplay.',
-            });';
+        echo "var jsn = eval(".CJSON::encode($initialize).");";
+        echo "console.log(jsn);";
+        echo '$("#egalleria_'.$this->id.'").galleria(jsn);';
         echo "</script>";
         echo "<div>";
     }
